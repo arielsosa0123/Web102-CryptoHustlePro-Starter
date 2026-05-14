@@ -1,41 +1,43 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 import CoinInfo from "./Components/CoinInfo"
-
+ 
 const API_KEY = import.meta.env.VITE_APP_API_KEY
-
+ 
 function App() {
   const [list, setList] = useState(null)
   const [filteredResults, setFilteredResults] = useState([])
   const [searchInput, setSearchInput] = useState("")
-
+ 
   useEffect(() => {
     const fetchAllCoinData = async () => {
       const response = await fetch(
-        "https://min-api.cryptocompare.com/data/top/totaltoptiervol?limit=100&assetClass=ALL&tsym=usd&api_key="
-        + API_KEY
+        "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1",
+        {
+          headers: {
+            "x-cg-demo-api-key": API_KEY,
+          },
+        }
       )
       const json = await response.json()
       setList(json)
     }
     fetchAllCoinData().catch(console.error)
   }, [])
-
+ 
   const searchItems = searchValue => {
     setSearchInput(searchValue)
     if (searchValue !== "") {
-      const filteredData = list.Data.filter((item) =>
-        Object.values(item.CoinInfo)
-          .join("")
-          .toLowerCase()
-          .includes(searchValue.toLowerCase())
+      const filteredData = list.filter(coin =>
+        coin.name.toLowerCase().includes(searchValue.toLowerCase()) ||
+        coin.symbol.toLowerCase().includes(searchValue.toLowerCase())
       )
       setFilteredResults(filteredData)
     } else {
-      setFilteredResults(list.Data)
+      setFilteredResults(list)
     }
   }
-
+ 
   return (
     <div className="whole-page">
       <h1>My Crypto List</h1>
@@ -46,41 +48,29 @@ function App() {
       />
       <ul>
         {searchInput.length > 0
-          ? filteredResults
-              .map(coin => {
-                const coinData = coin.CoinInfo
-                if (
-                  coinData.Algorithm !== "N/A" &&
-                  coinData.ProofType !== "N/A"
-                ) {
-                  return (
-                    <CoinInfo
-                      key={coinData.Name}
-                      image={coinData.ImageUrl}
-                      name={coinData.FullName}
-                      symbol={coinData.Name}
-                    />
-                  )
-                }
-                return null
-              })
-          : list?.Data
-              .map(data => data.CoinInfo)
-              .filter(coinData =>
-                coinData.Algorithm !== "N/A" &&
-                coinData.ProofType !== "N/A"
-              )
-              .map(coinData => (
-                <CoinInfo
-                  key={coinData.Name}
-                  image={coinData.ImageUrl}
-                  name={coinData.FullName}
-                  symbol={coinData.Name}
-                />
-              ))}
+          ? filteredResults.map(coin => (
+              <CoinInfo
+                key={coin.id}
+                id={coin.id}
+                image={coin.image}
+                name={coin.name}
+                symbol={coin.symbol}
+                price={coin.current_price}
+              />
+            ))
+          : list?.map(coin => (
+              <CoinInfo
+                key={coin.id}
+                id={coin.id}
+                image={coin.image}
+                name={coin.name}
+                symbol={coin.symbol}
+                price={coin.current_price}
+              />
+            ))}
       </ul>
     </div>
   )
 }
-
+ 
 export default App
