@@ -9,7 +9,7 @@ function Header(){
         </Link>
       </nav>
 
-      <p></p>
+      <p>&nbsp;</p>
       
       <Outlet />
     </div>
