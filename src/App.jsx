@@ -1,76 +1,35 @@
-import { useEffect, useState } from 'react'
-import './App.css'
-import CoinInfo from "./Components/CoinInfo"
- 
-const API_KEY = import.meta.env.VITE_APP_API_KEY
- 
+import { useEffect, useState } from "react";
+import { BrowserRouter, Route, Routes } from "react-router";
+import "./App.css";
+import Header from "./routes/Header";
+import Test from "./routes/Test";
+import CoinInfo from "./Components/CoinInfo";
+
+const API_KEY = import.meta.env.VITE_APP_API_KEY;
+
 function App() {
-  const [list, setList] = useState(null)
-  const [filteredResults, setFilteredResults] = useState([])
-  const [searchInput, setSearchInput] = useState("")
- 
-  useEffect(() => {
-    const fetchAllCoinData = async () => {
-      const response = await fetch(
-        "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1",
-        {
-          headers: {
-            "x-cg-demo-api-key": API_KEY,
-          },
-        }
-      )
-      const json = await response.json()
-      setList(json)
-    }
-    fetchAllCoinData().catch(console.error)
-  }, [])
- 
-  const searchItems = searchValue => {
-    setSearchInput(searchValue)
-    if (searchValue !== "") {
-      const filteredData = list.filter(coin =>
-        coin.name.toLowerCase().includes(searchValue.toLowerCase()) ||
-        coin.symbol.toLowerCase().includes(searchValue.toLowerCase())
-      )
-      setFilteredResults(filteredData)
-    } else {
-      setFilteredResults(list)
-    }
-  }
- 
   return (
-    <div className="whole-page">
-      <h1>My Crypto List</h1>
-      <input
-        type="text"
-        placeholder="Search..."
-        onChange={(inputString) => searchItems(inputString.target.value)}
-      />
-      <ul>
-        {searchInput.length > 0
-          ? filteredResults.map(coin => (
-              <CoinInfo
-                key={coin.id}
-                id={coin.id}
-                image={coin.image}
-                name={coin.name}
-                symbol={coin.symbol}
-                price={coin.current_price}
-              />
-            ))
-          : list?.map(coin => (
-              <CoinInfo
-                key={coin.id}
-                id={coin.id}
-                image={coin.image}
-                name={coin.name}
-                symbol={coin.symbol}
-                price={coin.current_price}
-              />
-            ))}
-      </ul>
-    </div>
-  )
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Header />}> {/* Header */}
+
+          <Route index element={<CoinInfo image={"https://www.baidu.com/favicon.ico"} />} />
+        </Route>
+        
+        Can you port forward http://localhost:5173 ?
+        Uou mean reset? 
+        Umm no there should be a port forward tab like "terminal" tab. Or maybe you can add my discord to stay connected
+        
+        and make this as a git repo
+        so i can debug locally to see what's wrong
+
+        yeah lets add each other on discord Username: arielsosa0123#0481
+        username is incorrect?
+        Sent
+        {/*<Route index element={<App />} />*/}
+      </Routes>
+    </BrowserRouter>
+  );
 }
- 
-export default App
+
+export default App;
